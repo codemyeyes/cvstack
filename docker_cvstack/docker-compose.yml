@@ -1,0 +1,65 @@
+version: "3.5"
+
+services:
+
+  php_apache:
+    build: php_apache
+    ports:
+      - "12301:80"
+    volumes:
+      - "./../:/var/www/html"
+    # networks:
+    #     - dev_network
+
+  pma:
+    image: phpmyadmin/phpmyadmin
+    # build: pma
+    ports:
+      - "12302:80"
+    # networks:
+    #     - dev_network
+    environment:
+      PMA_ARBITRARY: "1"
+
+  db_mysql57:
+    image: mysql:5.7
+    # build: db_mysql57
+    restart: always
+    ports:
+      - "12303:3306"
+    # networks:
+    #     - dev_network
+    volumes:
+      - "./db_mysql57/mysql/:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: "111111"
+    command: mysqld --sql_mode=""
+
+  db_mongo:
+    image: mongo
+    # build: db_mongo
+    restart: always
+    ports:
+      - "12304:27017"
+    # networks:
+    #     - dev_network
+    volumes:
+      - "./db_mongo/data/db:/data/db"
+    command:
+      [--auth]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "admin"
+      MONGO_INITDB_ROOT_PASSWORD: "111111"
+
+  db_redis:
+    image: redis
+    # build: db_redis
+    command: "redis-server --requirepass 111111"
+    restart: always
+    ports:
+      - "12305:6379"
+    # networks:
+    #     - dev_network
+
+# networks: 
+#     dev_network:
